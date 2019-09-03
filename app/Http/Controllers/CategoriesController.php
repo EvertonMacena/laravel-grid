@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Table\Table;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class CategoriesController extends Controller
 {
+    private $table;
+    /**
+     * CategoriesController constructor.
+     */
+    public function __construct(Table $table)
+    {
+        $this->table = $table;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,20 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        dd($this->table
+            ->model(Category::class)
+            ->columns([
+                [
+                    'label' => 'Nome',
+                    'name' => 'name'
+                ]
+            ])
+            ->search()
+            ->rows());
+
+        return view('categories.index', [
+            'table' => $this->table
+        ]);
     }
 
     /**
