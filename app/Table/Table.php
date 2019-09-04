@@ -15,7 +15,14 @@ class Table
      */
     private $model = null;
     private $modelOriginal = null;
+    private $perPage = 15;
     private $columns = [];
+
+    public function paginate($perPage)
+    {
+        $this->perPage = $perPage;
+        return $this;
+    }
 
     public function rows()
     {
@@ -44,7 +51,7 @@ class Table
         $keyName = $this->modelOriginal->getkeyName();
         $columns = collect($this->columns())->pluck('name')->toArray();
         array_unshift($columns, $keyName);
-        $this->rows = $this->model->get($columns);
+        $this->rows = $this->model->paginate($this->perPage, $columns);
         return $this;
     }
 

@@ -1,3 +1,5 @@
+@if(count($table->rows()))
+{!! $table->rows()->links() !!}
 <table class="table table-striped">
     <thead>
         <tr>
@@ -15,5 +17,10 @@
             </tr>
         @endforeach
     </tbody>
-
 </table>
+{!! $table->rows()->links() !!}
+@else
+    <div class="col-12">
+        Nenhum registro encontrado
+    </div>
+@endif
