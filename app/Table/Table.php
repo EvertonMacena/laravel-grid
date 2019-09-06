@@ -70,6 +70,13 @@ class Table
         return $this;
     }
 
+    public function addDeleteAction($router, $template = null)
+    {
+        $this->addAction('Excluir', $router, !$template ? 'table.delete_action' : $template);
+
+        return $this;
+    }
+
     public function search()
     {
         $keyName = $this->modelOriginal->getkeyName();

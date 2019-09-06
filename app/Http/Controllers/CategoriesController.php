@@ -33,6 +33,7 @@ class CategoriesController extends Controller
                 ]
             ])
             ->addEditAction('categories.edit')
+            ->addDeleteAction('categories.destroy')
             ->paginate(6)
             ->search();
 
@@ -102,8 +103,8 @@ class CategoriesController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
-        //
+        echo "exluir: ".$id;
     }
 }
