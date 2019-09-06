@@ -32,6 +32,7 @@ class CategoriesController extends Controller
                     'name' => 'name'
                 ]
             ])
+            ->addEditAction('categories.edit')
             ->paginate(6)
             ->search();
 
@@ -78,9 +79,9 @@ class CategoriesController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($id)
     {
-        //
+        echo $id;
     }
 
     /**

@@ -10,13 +10,14 @@ class Table
 {
 
     private $rows = [];
+    private $columns = [];
+    private $actions = [];
     /**
      * @var Builder
      */
     private $model = null;
     private $modelOriginal = null;
     private $perPage = 15;
-    private $columns = [];
 
     public function paginate($perPage)
     {
@@ -43,6 +44,29 @@ class Table
         if(!$columns) return $this->columns;
 
         $this->columns = $columns;
+        return $this;
+    }
+
+    public function actions()
+    {
+        return $this->actions;
+    }
+
+    public function addAction($label, $router, $template)
+    {
+        $this->actions[] = [
+            'label' => $label,
+            'router' => $router,
+            'template' => $template
+        ];
+
+        return $this;
+    }
+
+    public function addEditAction($router, $template = null)
+    {
+        $this->addAction('Editar', $router, !$template ? 'table.edit_action' : $template);
+
         return $this;
     }
 
