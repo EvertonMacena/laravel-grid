@@ -12,6 +12,7 @@ class Table
     private $rows = [];
     private $columns = [];
     private $actions = [];
+    private $filters = [];
     /**
      * @var Builder
      */
@@ -77,13 +78,57 @@ class Table
         return $this;
     }
 
+    public function filters($filters)
+    {
+        $this->filters = $filters;
+        return $this;
+    }
+
     public function search()
     {
         $keyName = $this->modelOriginal->getkeyName();
         $columns = collect($this->columns())->pluck('name')->toArray();
         array_unshift($columns, $keyName);
+        $this->applyFilters();
+        $this->applyOrders();
         $this->rows = $this->model->paginate($this->perPage, $columns);
         return $this;
+    }
+
+    protected function applyFilters()
+    {
+        foreach ($this->filters as $filter){
+            $field = $filter['name'];
+            $operator = $filter['operator'];
+
+            $search = \Request::get('search');
+            $search = strtolower($operator) === 'like' ? '%'.$search.'%' : $search;
+            if(!strpos($field, '.')){
+                $this->model = $this->model->orWhere($field, $operator, $search);
+            } else {
+                list($relation, $field) = explode('.', $filter['name']);
+                $this->model = $this->model->orWhereHas($relation, function ($query) use($field, $operator, $search){
+                    $query->where($field, $operator, $search);
+                });
+            }
+        }
+    }
+
+    protected function applyOrders()
+    {
+        $fieldOrderParam = \Request::get('field_order');
+        $orderParam = \Request::get('order');
+        foreach ($this->columns() as $key => $column){
+            if($column['name'] === $fieldOrderParam && isset($column['order'])){
+                $order = $orderParam === 'desc'? 'desc' : 'asc';
+                $this->columns[$key]['_order'] = $order;
+                $this->model = $this->model->orderBy("{$column['name']}", $order);
+            } elseif ($column['order']==='asc' || $column['order']==='desc'){
+                $this->columns[$key]['_order'] = $column['order'];
+                $this->model = $this->model->orderBy("{$column['name']}", $column['order']);
+            }
+        }
+
     }
 
 }

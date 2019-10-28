@@ -29,7 +29,18 @@ class CategoriesController extends Controller
             ->columns([
                 [
                     'label' => 'Nome',
-                    'name' => 'name'
+                    'name' => 'name',
+                    'order' => 'asc'
+                ]
+            ])
+            ->filters([
+                [
+                    'name' => 'name',
+                    'operator' => 'like',
+                ],
+                [
+                    'name' => 'products.name',
+                    'operator' => 'like'
                 ]
             ])
             ->addEditAction('categories.edit')

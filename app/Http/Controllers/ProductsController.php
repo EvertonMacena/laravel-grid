@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\Table\Table;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
+    private $table;
+    /**
+     * CategoriesController constructor.
+     */
+    public function __construct(Table $table)
+    {
+        $this->table = $table;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,38 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        //
+        $this->table
+            ->model(Product::class)
+            ->columns([
+                [
+                    'label' => 'Nome',
+                    'name' => 'name',
+                    'order' => 'asc'
+                ],
+                [
+                    'label' => 'Estoque',
+                    'name' => 'stock',
+                    'order' => 'asc'
+                ]
+            ])
+            ->filters([
+                [
+                    'name' => 'name',
+                    'operator' => 'like',
+                ],
+                [
+                    'name' => 'categories.name',
+                    'operator' => 'like'
+                ]
+            ])
+            ->addEditAction('categories.edit')
+            ->addDeleteAction('categories.destroy')
+            ->paginate(6)
+            ->search();
+
+        return view('products.index', [
+            'table' => $this->table
+        ]);
     }
 
     /**
